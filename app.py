@@ -36,7 +36,6 @@ st.caption("Sincronizado en tiempo real | Notificaciones dirigidas a falba@mtc.g
 # ==============================================================================
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh61k/export?format=csv&gid=0"
 
-@st.cache_data(ttl=60)
 def cargar_datos():
     df = pd.read_csv(SHEET_URL)
     if 'Unnamed: 0' in df.columns:
@@ -53,7 +52,7 @@ try:
     df = cargar_datos()
     st.success("🟢 Conectado en vivo con Google Sheets")
 except Exception as e:
-    st.error("⚠️ Pendiente vincular ID de Google Sheets o el enlace no es público.")
+    st.error(f"⚠️ Error al conectar con Google Sheets: {e}")
     st.stop()
 
 # Filtros laterales
@@ -123,26 +122,4 @@ if 'CONCESIONARIO' in df_filtrado.columns:
                     f_gracia = f_q + timedelta(days=30)
                     
                     if f_q >= hoy or (hoy <= f_gracia):
-                        st.write(f"- **{q}º Quinquenio (Siguiente Evaluado):** Vence el **{f_q.strftime('%d/%m/%Y')}** | Periodo de gracia para pago de tasa hasta: **{f_gracia.strftime('%d/%m/%Y')}**")
-                        
-                        if hoy < f_q:
-                            st.success("🟢 **Estado:** VIGENTE (Faltan " + str((f_q - hoy).days) + " días para el próximo vencimiento de quinquenio)")
-                        elif f_q <= hoy <= f_gracia:
-                            st.warning("🟧 **Estado:** EN PERIODO DE GRACIA (Quedan " + str((f_gracia - hoy).days) + " días para realizar el pago de la Tasa Quinquenal)")
-                        quinquenio_encontrado = True
-                        break
-                
-                if not quinquenio_encontrado:
-                    st.write(f"- **Tramo Final:** La empresa ya cumplió sus quinquenios intermedios. Su vigencia se evalúa contra la **Fecha de Vencimiento Final ({f_venc_str})**.")
-
-st.divider()
-
-# Visor General
-st.markdown('<p class="mtc-subtitle">📋 Lista General de Concesiones Postales</p>', unsafe_allow_html=True)
-df_tabla = df_filtrado.copy()
-if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
-    df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%Y-%m-%d')
-if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
-    df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%Y-%m-%d')
-
-st.dataframe(df_tabla, use_container_width=True, height=400)
+                        st.write(f"- **{q}º Quinquenio (Siguiente Evaluado):** Vence el **{f_q.strftime('%d/%m/%Y')}** | Periodo de gracia para pago de
