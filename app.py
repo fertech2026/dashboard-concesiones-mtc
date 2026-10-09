@@ -34,8 +34,7 @@ st.caption("Sincronizado en tiempo real | Notificaciones dirigidas a falba@mtc.g
 # ==============================================================================
 # ENLACE DE GOOGLE SHEETS
 # ==============================================================================
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh61k/export?format=csv&gid=0"
-
+SHEET_URL = SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh6lk/export?format=csv&gid=0"
 def cargar_datos():
     df = pd.read_csv(SHEET_URL)
     if 'Unnamed: 0' in df.columns:
