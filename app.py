@@ -122,4 +122,28 @@ if 'CONCESIONARIO' in df_filtrado.columns:
                     f_gracia = f_q + timedelta(days=30)
                     
                     if f_q >= hoy or (hoy <= f_gracia):
-                        st.write(f"- **{q}º Quinquenio (Siguiente Evaluado):** Vence el **{f_q.strftime('%d/%m/%Y')}** | Periodo de gracia para pago de
+                        f_q_str = f_q.strftime('%d/%m/%Y')
+                        f_gracia_str = f_gracia.strftime('%d/%m/%Y')
+                        st.write(f"- **{q}º Quinquenio (Siguiente Evaluado):** Vence el **{f_q_str}** | Periodo de gracia para pago de tasa hasta: **{f_gracia_str}**")
+                        
+                        if hoy < f_q:
+                            st.success(f"🟢 **Estado:** VIGENTE (Faltan {(f_q - hoy).days} días para el próximo vencimiento de quinquenio)")
+                        elif f_q <= hoy <= f_gracia:
+                            st.warning(f"🟧 **Estado:** EN PERIODO DE GRACIA (Quedan {(f_gracia - hoy).days} días para realizar el pago de la Tasa Quinquenal)")
+                        quinquenio_encontrado = True
+                        break
+                
+                if not quinquenio_encontrado:
+                    st.write(f"- **Tramo Final:** La empresa ya cumplió sus quinquenios intermedios. Su vigencia se evalúa contra la **Fecha de Vencimiento Final ({f_venc_str})**.")
+
+st.divider()
+
+# Visor General
+st.markdown('<p class="mtc-subtitle">📋 Lista General de Concesiones Postales</p>', unsafe_allow_html=True)
+df_tabla = df_filtrado.copy()
+if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
+    df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%Y-%m-%d')
+if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
+    df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%Y-%m-%d')
+
+st.dataframe(df_tabla, use_container_width=True, height=400)
