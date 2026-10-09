@@ -3,13 +3,38 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 st.set_page_config(page_title="MTC - Dashboard Concesiones Postales", layout="wide", page_icon="🏛️")
-st.title("🏛️ MTC - Sistema de Control y Búsqueda de Concesiones Postales")
+
+# Estilos personalizados MTC
+st.markdown("""
+    <style>
+    /* Color de encabezado principal */
+    .mtc-title {
+        color: #E1251B;
+        font-weight: bold;
+        font-size: 2.2rem;
+        margin-bottom: 0.2rem;
+    }
+    /* Subtítulos */
+    .mtc-subtitle {
+        color: #1F2937;
+        font-weight: 600;
+        font-size: 1.3rem;
+    }
+    /* Tarjetas de métricas */
+    div[data-testid="stMetricValue"] {
+        color: #E1251B !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Título con estilo MTC
+st.markdown('<p class="mtc-title">🏛️ MTC - Sistema de Control y Búsqueda de Concesiones Postales</p>', unsafe_allow_html=True)
 st.caption("Sincronizado en tiempo real | Notificaciones dirigidas a falba@mtc.gob.pe")
 
 # ==============================================================================
-# REEMPLAZA "TU_ID_DE_HOJA" CON EL ID REAL DE TU GOOGLE SHEETS
+# ENLACE DE GOOGLE SHEETS
 # ==============================================================================
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh6lk/export?format=csv&gid=0"
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh61k/export?format=csv&gid=0"
 
 @st.cache_data(ttl=60)
 def cargar_datos():
@@ -29,7 +54,6 @@ try:
     st.success("🟢 Conectado en vivo con Google Sheets")
 except Exception as e:
     st.error("⚠️ Pendiente vincular ID de Google Sheets o el enlace no es público.")
-    st.info("Para vincularlo, edita la variable `SHEET_URL` en `app.py` reemplazando `TU_ID_DE_HOJA` por tu ID de Google Sheets.")
     st.stop()
 
 # Filtros laterales
@@ -58,8 +82,8 @@ col4.metric("Dominio Institucional", "@mtc.gob.pe")
 
 st.divider()
 
-# Análisis de Quinquenios Activos
-st.subheader("📌 Ficha Detallada y Estado Actual de Quinquenio")
+# Sección Ficha
+st.markdown('<p class="mtc-subtitle">📌 Ficha Detallada y Estado Actual de Quinquenio</p>', unsafe_allow_html=True)
 if 'CONCESIONARIO' in df_filtrado.columns:
     lista_empresas = df_filtrado['CONCESIONARIO'].dropna().tolist()
     if lista_empresas:
@@ -114,7 +138,7 @@ if 'CONCESIONARIO' in df_filtrado.columns:
 st.divider()
 
 # Visor General
-st.subheader("📋 Lista General de Concesiones Postales")
+st.markdown('<p class="mtc-subtitle">📋 Lista General de Concesiones Postales</p>', unsafe_allow_html=True)
 df_tabla = df_filtrado.copy()
 if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
     df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%Y-%m-%d')
