@@ -10,115 +10,146 @@ st.set_page_config(
     page_icon="🏛️"
 )
 
+# COLOR ROJO ÚNICO INSTITUCIONAL MTC
+COLOR_ROJO_MTC = "#E1251B"
+
 # ==============================================================================
-# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA ABADI / MONTSERRAT
+# ESTILOS CSS UNIFICADOS (MISMO ROJO EXACTO #E1251B EN TODO EL DASHBOARD)
 # ==============================================================================
-st.markdown("""
+st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
     /* Tipografía General */
-    html, body, [class*="css"], .stMarkdown {
+    html, body, [class*="css"], .stMarkdown, p, span, label {{
         font-family: 'Abadi', 'Montserrat', sans-serif !important;
-    }
+        color: #0F172A;
+    }}
 
-    /* Ocultar barra superior y pie de página */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Ocultar elementos secundarios */
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
 
-    /* Banner Superior Institucional */
-    .header-banner {
-        background: #d40b33;
+    /* Banner Superior Institucional en Rojo MTC exacto */
+    .header-banner {{
+        background: {COLOR_ROJO_MTC} !important;
         padding: 24px 30px;
         border-radius: 12px;
         margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(225, 37, 27, 0.2);
-    }
-    .header-title {
+        box-shadow: 0 4px 15px rgba(225, 37, 27, 0.25);
+    }}
+    .header-title {{
         font-size: 2rem !important;
         font-weight: 800 !important;
         margin: 0 !important;
         color: #FFFFFF !important;
         letter-spacing: -0.5px;
-    }
-    .header-sub {
+    }}
+    .header-sub {{
         font-size: 0.95rem;
         color: #F8FAFC !important;
         margin-top: 6px;
         opacity: 0.95;
-    }
+    }}
 
     /* Tarjetas KPI Institucionales */
-    .kpi-card {
+    .kpi-card {{
         background-color: #FFFFFF;
         border-radius: 10px;
         padding: 18px 20px;
         border: 1px solid #E2E8F0;
-        border-top: 4px solid #E1251B;
+        border-top: 4px solid {COLOR_ROJO_MTC};
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         text-align: center;
-    }
-    .kpi-label {
+    }}
+    .kpi-label {{
         font-size: 0.82rem;
         font-weight: 700;
         color: #64748B !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 6px;
-    }
-    .kpi-value {
+    }}
+    .kpi-value {{
         font-size: 1.8rem;
         font-weight: 800;
         color: #0F172A !important;
-    }
-    .kpi-sub {
+    }}
+    .kpi-sub {{
         font-size: 0.85rem;
         font-weight: 600;
-        color: #E1251B !important;
-    }
+        color: {COLOR_ROJO_MTC} !important;
+    }}
 
     /* Títulos de sección */
-    .section-header {
+    .section-header {{
         font-size: 1.25rem;
         font-weight: 700;
         color: #1E293B !important;
         margin-top: 25px;
         margin-bottom: 15px;
-        border-left: 4px solid #E1251B;
+        border-left: 4px solid {COLOR_ROJO_MTC};
         padding-left: 12px;
-    }
+    }}
 
-    /* Selectbox en Rojo MTC con texto blanco */
-    div[data-baseweb="select"] > div {
-        background-color: #E1251B !important;
-        border: 2px solid #E1251B !important;
+    /* Barra Lateral y su Encabezado */
+    [data-testid="stSidebar"] {{
+        background-color: #F8FAFC;
+        border-right: 1px solid #E2E8F0;
+    }}
+    .sidebar-header {{
+        background-color: {COLOR_ROJO_MTC} !important;
+        color: white !important;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }}
+
+    /* Selectbox en Rojo MTC exacto */
+    div[data-baseweb="select"] > div {{
+        background-color: {COLOR_ROJO_MTC} !important;
+        border: 2px solid {COLOR_ROJO_MTC} !important;
         border-radius: 8px !important;
-    }
+    }}
 
-    div[data-baseweb="select"] * {
+    div[data-baseweb="select"] * {{
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
-    }
+    }}
 
-    div[data-baseweb="select"] svg {
+    div[data-baseweb="select"] svg {{
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
-    }
+    }}
 
-    /* Opciones desplegadas de Selectbox (Fondo Blanco con Texto Oscuro) */
-    div[data-baseweb="popover"] ul {
+    /* Popover desplegable del Selectbox */
+    div[data-baseweb="popover"] ul {{
         background-color: #FFFFFF !important;
-    }
+    }}
 
-    div[data-baseweb="popover"] li, div[data-baseweb="popover"] li * {
+    div[data-baseweb="popover"] li, div[data-baseweb="popover"] li * {{
         color: #1E293B !important;
         -webkit-text-fill-color: #1E293B !important;
-    }
+    }}
 
-    div[data-baseweb="popover"] li:hover {
+    div[data-baseweb="popover"] li:hover {{
         background-color: #FEF2F2 !important;
-    }
+    }}
+
+    /* ELIMINACIÓN DEL COLOR SALMÓN DE LA TABLA GENERAL */
+    [data-testid="stDataFrame"] th, 
+    [data-testid="stDataFrame"] [role="columnheader"],
+    [data-testid="stDataFrame"] [data-testid="stTable"] th {{
+        background-color: {COLOR_ROJO_MTC} !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        font-weight: 700 !important;
+        opacity: 1 !important;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -159,7 +190,7 @@ st.markdown("""
 # ==============================================================================
 # BARRA LATERAL - FILTROS
 # ==============================================================================
-st.sidebar.markdown('### 🔍 Búsqueda y Filtros')
+st.sidebar.markdown('<div class="sidebar-header">🔍 Búsqueda y Filtros</div>', unsafe_allow_html=True)
 
 busqueda = st.sidebar.text_input("Razón Social / Concesionario:", placeholder="Ej. DHL, OLVA, EXPRESS...")
 ambito_filtro = st.sidebar.multiselect("Ámbito Geográfico:", options=sorted(df['AMBITO'].dropna().unique().tolist()) if 'AMBITO' in df.columns else [])
@@ -195,7 +226,7 @@ with col2:
     st.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-label">Resultados Filtrados</div>
-            <div class="kpi-value" style="color:#E1251B;">{len(df_filtrado)}</div>
+            <div class="kpi-value" style="color:{COLOR_ROJO_MTC};">{len(df_filtrado)}</div>
             <div style="font-size:0.75rem; color:#64748B;">Coincidencias activas</div>
         </div>
     """, unsafe_allow_html=True)
@@ -298,7 +329,7 @@ with col_g1:
             y='Cantidad', 
             text='Cantidad',
             title="Concesiones por Ámbito Geográfico",
-            color_discrete_sequence=['#E1251B']
+            color_discrete_sequence=[COLOR_ROJO_MTC]
         )
         fig_ambito.update_layout(
             template="plotly_white", 
@@ -319,7 +350,7 @@ with col_g2:
             values='Cantidad', 
             title="Distribución por Plazo Autorizado",
             hole=0.4,
-            color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8']
+            color_discrete_sequence=[COLOR_ROJO_MTC, '#1E293B', '#64748B', '#94A3B8']
         )
         fig_plazo.update_layout(
             margin=dict(t=40, b=10, l=10, r=10),
@@ -328,7 +359,7 @@ with col_g2:
         st.plotly_chart(fig_plazo, use_container_width=True)
 
 # ==============================================================================
-# SECCIÓN 3: TABLA GENERAL COMPLETA
+# SECCIÓN 3: TABLA GENERAL COMPLETA (ESTILO DIRECTO ROJO SÓLIDO MTC)
 # ==============================================================================
 st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
@@ -340,7 +371,7 @@ if not df_tabla.empty:
     if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
         df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
 
-    # Aplicamos estilo directo en Pandas para forzar el Rojo MTC (#E1251B) en encabezados y filas legibles
+    # Estilizado en Pandas forzando Rojo MTC sin transparencias ni mezcla de color
     df_estilizado = df_tabla.style.set_properties(**{
         'background-color': '#FFFFFF',
         'color': '#0F172A',
@@ -349,9 +380,10 @@ if not df_tabla.empty:
         {
             'selector': 'th',
             'props': [
-                ('background-color', '#E1251B !important'),
+                ('background-color', f'{COLOR_ROJO_MTC} !important'),
                 ('color', '#FFFFFF !important'),
-                ('font-weight', 'bold !important')
+                ('font-weight', 'bold !important'),
+                ('opacity', '1 !important')
             ]
         }
     ])
