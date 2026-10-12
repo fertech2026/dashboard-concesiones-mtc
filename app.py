@@ -26,7 +26,7 @@ st.markdown("""
 
     /* Banner Superior Institucional */
     .header-banner {
-        background: linear-gradient(135deg, #E1251B 0%, #B81B13 100%);
+        background: #d40b33;
         padding: 24px 30px;
         border-radius: 12px;
         color: white;
