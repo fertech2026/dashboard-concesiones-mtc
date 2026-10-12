@@ -103,18 +103,14 @@ st.markdown("""
         text-align: center;
     }
 
-   /* Forzar texto en blanco para la opción seleccionada del Selectbox */
-    div[data-baseweb="select"] span {
+   /* Forzar texto, flecha y contenedor de la opción seleccionada a Blanco */
+    div[data-testid="stSelectbox"] * {
         color: #FFFFFF !important;
-    }
-
-    div[data-baseweb="select"] div[role="button"] {
-        color: #FFFFFF !important;
-    }
-
-    /* Forzar color blanco en la flecha del desplegable */
-    div[data-baseweb="select"] svg {
         fill: #FFFFFF !important;
+    }
+    
+    div[data-baseweb="select"] > div {
+        background-color: #E1251B !important;
         color: #FFFFFF !important;
     }
     </style>
