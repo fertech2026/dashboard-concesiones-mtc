@@ -2,39 +2,114 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title="MTC - Dashboard Concesiones Postales", layout="wide", page_icon="🏛️")
+# Configuración de página con icono oficial e interfaz ancha
+st.set_page_config(
+    page_title="MTC | Control y Búsqueda de Concesiones Postales", 
+    layout="wide", 
+    page_icon="🏛️"
+)
 
-# Estilos personalizados MTC
+# ==============================================================================
+# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA MONTSERRAT
+# ==============================================================================
 st.markdown("""
     <style>
-    /* Color de encabezado principal */
-    .mtc-title {
-        color: #E1251B;
-        font-weight: bold;
-        font-size: 2.2rem;
-        margin-bottom: 0.2rem;
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+    html, body, [class*="css"], .stMarkdown, div {
+        font-family: 'Montserrat', sans-serif !important;
     }
-    /* Subtítulos */
-    .mtc-subtitle {
-        color: #1F2937;
+
+    /* Ocultar barra superior por defecto de Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+
+    /* Banner Superior Institucional */
+    .header-banner {
+        background: linear-gradient(135deg, #E1251B 0%, #B81B13 100%);
+        padding: 24px 30px;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(225, 37, 27, 0.2);
+    }
+    .header-title {
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        margin: 0 !important;
+        color: #FFFFFF !important;
+        letter-spacing: -0.5px;
+    }
+    .header-sub {
+        font-size: 0.95rem;
+        color: #F8FAFC;
+        margin-top: 6px;
+        opacity: 0.95;
+    }
+
+    /* Tarjetas KPI Institucionales */
+    .kpi-card {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        padding: 18px 20px;
+        border: 1px solid #E2E8F0;
+        border-top: 4px solid #E1251B;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        text-align: center;
+    }
+    .kpi-label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+    .kpi-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0F172A;
+    }
+    .kpi-sub {
+        font-size: 0.85rem;
         font-weight: 600;
-        font-size: 1.3rem;
+        color: #E1251B;
     }
-    /* Tarjetas de métricas */
-    div[data-testid="stMetricValue"] {
-        color: #E1251B !important;
+
+    /* Títulos de sección */
+    .section-header {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-top: 20px;
+        margin-bottom: 12px;
+        border-left: 4px solid #E1251B;
+        padding-left: 12px;
+    }
+
+    /* Barra Lateral */
+    [data-testid="stSidebar"] {
+        background-color: #F8FAFC;
+        border-right: 1px solid #E2E8F0;
+    }
+    .sidebar-header {
+        background-color: #E1251B;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        text-align: center;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Título con estilo MTC
-st.markdown('<p class="mtc-title">🏛️ MTC - Sistema de Control y Búsqueda de Concesiones Postales</p>', unsafe_allow_html=True)
-st.caption("Sincronizado en tiempo real | Notificaciones dirigidas a falba@mtc.gob.pe")
+# ==============================================================================
+# CONEXIÓN A DATOS EN VIVO (GOOGLE SHEETS)
+# ==============================================================================
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh6lk/export?format=csv&gid=0"
 
-# ==============================================================================
-# ENLACE DE GOOGLE SHEETS
-# ==============================================================================
-SHEET_URL = SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh6lk/export?format=csv&gid=0"
 def cargar_datos():
     df = pd.read_csv(SHEET_URL)
     if 'Unnamed: 0' in df.columns:
@@ -49,17 +124,32 @@ def cargar_datos():
 
 try:
     df = cargar_datos()
-    st.success("🟢 Conectado en vivo con Google Sheets")
+    conexion_ok = True
 except Exception as e:
+    conexion_ok = False
     st.error(f"⚠️ Error al conectar con Google Sheets: {e}")
     st.stop()
 
-# Filtros laterales
-st.sidebar.header("🔍 Buscador de Concesionarios")
-busqueda = st.sidebar.text_input("Ingresar Razón Social / Nombre:", placeholder="Ej. DHL, OLVA, EXPRESS...")
-ambito_filtro = st.sidebar.multiselect("Filtrar por Ámbito:", options=sorted(df['AMBITO'].dropna().unique().tolist()) if 'AMBITO' in df.columns else [])
-plazo_filtro = st.sidebar.multiselect("Filtrar por Plazo (Años):", options=[5, 10, 15, 20])
+# ==============================================================================
+# ENCABEZADO INSTITUCIONAL
+# ==============================================================================
+st.markdown("""
+    <div class="header-banner">
+        <div class="header-title">🏛️ MTC - Sistema de Control y Búsqueda de Concesiones Postales</div>
+        <div class="header-sub">Ministerio de Transportes y Comunicaciones | Sincronizado en tiempo real</div>
+    </div>
+""", unsafe_allow_html=True)
 
+# ==============================================================================
+# BARRA LATERAL - FILTROS
+# ==============================================================================
+st.sidebar.markdown('<div class="sidebar-header">🔍 Búsqueda y Filtros</div>', unsafe_allow_html=True)
+
+busqueda = st.sidebar.text_input("Razón Social / Concesionario:", placeholder="Ej. DHL, OLVA, EXPRESS...")
+ambito_filtro = st.sidebar.multiselect("Ámbito Geográfico:", options=sorted(df['AMBITO'].dropna().unique().tolist()) if 'AMBITO' in df.columns else [])
+plazo_filtro = st.sidebar.multiselect("Plazo de Concesión (Años):", options=[5, 10, 15, 20])
+
+# Aplicación de filtros
 df_filtrado = df.copy()
 
 if busqueda and 'CONCESIONARIO' in df_filtrado.columns:
@@ -71,27 +161,62 @@ if ambito_filtro and 'AMBITO' in df_filtrado.columns:
 if plazo_filtro and 'PLAZO DE CONCESION' in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado['PLAZO DE CONCESION'].isin(plazo_filtro)]
 
-# KPIs
+# ==============================================================================
+# TARJETAS DE MÉTRICAS (KPIs)
+# ==============================================================================
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Registro General", len(df))
-col2.metric("Resultados Encontrados", len(df_filtrado))
-col3.metric("Destinatario Alertas", "falba@mtc.gob.pe")
-col4.metric("Dominio Institucional", "@mtc.gob.pe")
 
-st.divider()
+with col1:
+    st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Registro General</div>
+            <div class="kpi-value">{len(df)}</div>
+            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Concesiones totales</div>
+        </div>
+    """, unsafe_allow_html=True)
 
-# Sección Ficha
-st.markdown('<p class="mtc-subtitle">📌 Ficha Detallada y Estado Actual de Quinquenio</p>', unsafe_allow_html=True)
+with col2:
+    st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Resultados Filtrados</div>
+            <div class="kpi-value" style="color:#E1251B;">{len(df_filtrado)}</div>
+            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Coincidencias activas</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+        <div class="kpi-card">
+            <div class="kpi-label">Contacto / Alertas</div>
+            <div class="kpi-sub" style="margin-top:8px;">falba@mtc.gob.pe</div>
+            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Notificaciones directas</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    st.markdown("""
+        <div class="kpi-card">
+            <div class="kpi-label">Estado Conexión</div>
+            <div class="kpi-value" style="color:#16A34A; font-size:1.3rem; margin-top:5px;">🟢 En Vivo</div>
+            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Google Sheets vinculado</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ==============================================================================
+# SECCIÓN 1: FICHA DETALLADA Y QUINQUENIOS
+# ==============================================================================
+st.markdown('<div class="section-header">📋 Ficha Detallada de Concesión y Quinquenios</div>', unsafe_allow_html=True)
+
 if 'CONCESIONARIO' in df_filtrado.columns:
     lista_empresas = df_filtrado['CONCESIONARIO'].dropna().tolist()
     if lista_empresas:
-        empresa_sel = st.selectbox("Seleccione una empresa para consultar:", options=lista_empresas)
+        empresa_sel = st.selectbox("Seleccione un Concesionario para evaluar:", options=lista_empresas)
         row = df[df['CONCESIONARIO'] == empresa_sel].iloc[0]
         
-        with st.expander(f"📋 Ficha Completa: {row['CONCESIONARIO']}", expanded=True):
+        with st.container():
             c1, c2, c3, c4 = st.columns(4)
-            c1.write(f"**Ámbito:** {row.get('AMBITO', 'N/A')}")
-            c2.write(f"**Plazo Total:** {row.get('PLAZO DE CONCESION', 'N/A')} Años")
+            c1.markdown(f"**Ámbito:**\n\n{row.get('AMBITO', 'N/A')}")
+            c2.markdown(f"**Plazo Autorizado:**\n\n{row.get('PLAZO DE CONCESION', 'N/A')} Años")
             
             f_inicio = row.get('FECHA DE INICIO DE CONCESION')
             f_venc = row.get('FECHA DE VENCIMIENTO DE CONCESION')
@@ -99,16 +224,18 @@ if 'CONCESIONARIO' in df_filtrado.columns:
             f_inicio_str = f_inicio.strftime('%d/%m/%Y') if pd.notnull(f_inicio) else 'N/A'
             f_venc_str = f_venc.strftime('%d/%m/%Y') if pd.notnull(f_venc) else 'N/A'
             
-            c3.write(f"**Fecha Inicio:** {f_inicio_str}")
-            c4.write(f"**Vencimiento Final:** {f_venc_str}")
+            c3.markdown(f"**Fecha Inicio:**\n\n{f_inicio_str}")
+            c4.markdown(f"**Vencimiento Final:**\n\n{f_venc_str}")
+            
+            st.markdown("---")
             
             plazo = row.get('PLAZO DE CONCESION')
             hoy = datetime.now()
             
             if plazo == 5:
-                st.info(f"ℹ️ **Concesión de 5 Años:** No requiere evaluación de quinquenios intermedios. Vence definitivamente el **{f_venc_str}**.")
+                st.info(f"ℹ️ **Concesión de 5 Años:** No requiere evaluaciones quinquenales intermedias. Vigencia directa hasta el **{f_venc_str}**.")
             elif plazo in [10, 15, 20] and pd.notnull(f_inicio):
-                st.markdown("#### 🗓️ Evaluación de Quinquenios")
+                st.markdown("##### 🗓️ Evaluación Legal de Quinquenios")
                 num_quinquenios = int(plazo / 5)
                 quinquenio_encontrado = False
                 
@@ -123,26 +250,27 @@ if 'CONCESIONARIO' in df_filtrado.columns:
                     if f_q >= hoy or (hoy <= f_gracia):
                         f_q_str = f_q.strftime('%d/%m/%Y')
                         f_gracia_str = f_gracia.strftime('%d/%m/%Y')
-                        st.write(f"- **{q}º Quinquenio (Siguiente Evaluado):** Vence el **{f_q_str}** | Periodo de gracia para pago de tasa hasta: **{f_gracia_str}**")
+                        st.write(f"• **{q}º Quinquenio Evaluado:** Vence el **{f_q_str}** | Límite periodo de gracia para pago de tasa: **{f_gracia_str}**")
                         
                         if hoy < f_q:
-                            st.success(f"🟢 **Estado:** VIGENTE (Faltan {(f_q - hoy).days} días para el próximo vencimiento de quinquenio)")
+                            st.success(f"🟢 **ESTADO VIGENTE:** Faltan {(f_q - hoy).days} días para la siguiente evaluación quinquenal.")
                         elif f_q <= hoy <= f_gracia:
-                            st.warning(f"🟧 **Estado:** EN PERIODO DE GRACIA (Quedan {(f_gracia - hoy).days} días para realizar el pago de la Tasa Quinquenal)")
+                            st.warning(f"🟧 **PERIODO DE GRACIA:** Quedan {(f_gracia - hoy).days} días para efectuar el pago de la Tasa Quinquenal.")
                         quinquenio_encontrado = True
                         break
                 
                 if not quinquenio_encontrado:
-                    st.write(f"- **Tramo Final:** La empresa ya cumplió sus quinquenios intermedios. Su vigencia se evalúa contra la **Fecha de Vencimiento Final ({f_venc_str})**.")
+                    st.write(f"• **Tramo Final:** Quinquenios intermedios cumplidos. Vigencia supeditada a la **Fecha de Vencimiento Final ({f_venc_str})**.")
 
-st.divider()
+# ==============================================================================
+# SECCIÓN 2: TABLA GENERAL
+# ==============================================================================
+st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
-# Visor General
-st.markdown('<p class="mtc-subtitle">📋 Lista General de Concesiones Postales</p>', unsafe_allow_html=True)
 df_tabla = df_filtrado.copy()
 if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
-    df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%Y-%m-%d')
+    df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%d/%m/%Y')
 if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
-    df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%Y-%m-%d')
+    df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
 
-st.dataframe(df_tabla, use_container_width=True, height=400)
+st.dataframe(df_tabla, use_container_width=True, height=420)
