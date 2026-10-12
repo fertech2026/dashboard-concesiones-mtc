@@ -1,14 +1,6 @@
 [theme]
-# Fondo principal
-backgroundColor="#cce0dc"
-
-# Fondo de la barra lateral (Gris tenue)
-secondaryBackgroundColor="#d40b33"
-
-# Color del texto
-textColor="#000000"
-
-# Color de acento institucional (Rojo MTC)
-primaryColor="#d40b33"
-
-font="abadi"
+primaryColor = "#E1251B"
+backgroundColor = "#cce0dc"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0F172A"
+font = "sans serif"
