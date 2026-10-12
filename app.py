@@ -81,8 +81,8 @@ st.markdown("""
         font-size: 1.25rem;
         font-weight: 700;
         color: #1E293B;
-        margin-top: 20px;
-        margin-bottom: 12px;
+        margin-top: 25px;
+        margin-bottom: 15px;
         border-left: 4px solid #E1251B;
         padding-left: 12px;
     }
@@ -103,27 +103,25 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 1. Fondo rojo MTC para la caja de selección */
+    /* Estilo Institucional para Selectbox (Fondo blanco limpio con borde e icono rojo) */
     div[data-baseweb="select"] > div {
-        background-color: #E1251B !important;
-        border-color: #E1251B !important;
+        background-color: #FFFFFF !important;
+        border: 2px solid #E1251B !important;
+        border-radius: 8px !important;
     }
 
-    /* 2. Forzar texto blanco en absolutamente todos los elementos internos (p, span, div) */
     div[data-baseweb="select"] * {
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
+        color: #0F172A !important;
+        -webkit-text-fill-color: #0F172A !important;
+        font-weight: 600 !important;
     }
 
-    /* 3. Ajustar flecha desplegable para que se vea blanca y nítida */
     div[data-baseweb="select"] svg {
-        fill: #FFFFFF !important;
-        color: #FFFFFF !important;
-        width: 1.2rem !important;
-        height: 1.2rem !important;
+        fill: #E1251B !important;
+        color: #E1251B !important;
     }
 
-    /* 4. Menú desplegable cuando se abre (fondo blanco con texto oscuro) */
+    /* Opciones flotantes al desplegar */
     div[data-baseweb="popover"] ul {
         background-color: #FFFFFF !important;
     }
@@ -133,7 +131,7 @@ st.markdown("""
     }
 
     div[data-baseweb="popover"] li:hover {
-        background-color: #F1F5F9 !important;
+        background-color: #FEF2F2 !important;
         color: #E1251B !important;
     }
     </style>
@@ -242,30 +240,76 @@ with col4:
 # ==============================================================================
 st.markdown('<div class="section-header">📋 Ficha Detallada de Concesión y Quinquenios</div>', unsafe_allow_html=True)
 
-if 'CONCESIONARIO' in df_filtrado.columns:
+if 'CONCESIONARIO' in df_filtrado.columns and not df_filtrado.empty:
     lista_empresas = df_filtrado['CONCESIONARIO'].dropna().tolist()
-    if lista_empresas:
-        empresa_sel = st.selectbox("Seleccione un Concesionario para evaluar:", options=lista_empresas)
-        row = df[df['CONCESIONARIO'] == empresa_sel].iloc[0]
+    empresa_sel = st.selectbox("Seleccione un Concesionario para evaluar:", options=lista_empresas)
+    
+    row = df_filtrado[df_filtrado['CONCESIONARIO'] == empresa_sel].iloc[0]
+    
+    c1, c2, c3, c4 = st.columns(4)
+    c1.markdown(f"**Ámbito:**\n\n{row.get('AMBITO', 'N/A')}")
+    c2.markdown(f"**Plazo Autorizado:**\n\n{row.get('PLAZO DE CONCESION', 'N/A')} Años")
+    
+    f_inicio = row.get('FECHA DE INICIO DE CONCESION')
+    f_venc = row.get('FECHA DE VENCIMIENTO DE CONCESION')
+    
+    f_inicio_str = f_inicio.strftime('%d/%m/%Y') if pd.notnull(f_inicio) else 'N/A'
+    f_venc_str = f_venc.strftime('%d/%m/%Y') if pd.notnull(f_venc) else 'N/A'
+    
+    c3.markdown(f"**Fecha Inicio:**\n\n{f_inicio_str}")
+    c4.markdown(f"**Vencimiento Final:**\n\n{f_venc_str}")
+    
+    st.markdown("---")
+    
+    plazo = row.get('PLAZO DE CONCESION')
+    hoy = datetime.now()
+    
+    if plazo == 5:
+        st.info(f"ℹ️ **Concesión de 5 Años:** No requiere evaluaciones quinquenales intermedias. Vigencia directa hasta el **{f_venc_str}**.")
+    elif plazo in [10, 15, 20] and pd.notnull(f_inicio):
+        st.markdown("##### 🗓️ Evaluación Legal de Quinquenios")
+        num_quinquenios = int(plazo / 5)
+        quinquenio_encontrado = False
         
-        with st.container():
-            c1, c2, c3, c4 = st.columns(4)
-            c1.markdown(f"**Ámbito:**\n\n{row.get('AMBITO', 'N/A')}")
-            c2.markdown(f"**Plazo Autorizado:**\n\n{row.get('PLAZO DE CONCESION', 'N/A')} Años")
+        for q in range(1, num_quinquenios):
+            try:
+                f_q = f_inicio.replace(year=f_inicio.year + (q * 5))
+            except ValueError:
+                f_q = f_inicio + timedelta(days=(q * 5 * 365))
             
-            f_inicio = row.get('FECHA DE INICIO DE CONCESION')
-            f_venc = row.get('FECHA DE VENCIMIENTO DE CONCESION')
+            f_gracia = f_q + timedelta(days=30)
             
-            f_inicio_str = f_inicio.strftime('%d/%m/%Y') if pd.notnull(f_inicio) else 'N/A'
-            f_venc_str = f_venc.strftime('%d/%m/%Y') if pd.notnull(f_venc) else 'N/A'
-            
-            c3.markdown(f"**Fecha Inicio:**\n\n{f_inicio_str}")
-            c4.markdown(f"**Vencimiento Final:**\n\n{f_venc_str}")
-            
-            st.markdown("---")
-            
-            plazo = row.get('PLAZO DE CONCESION')
-            hoy = datetime.now()
-            
-            if plazo == 5:
-                st.info
+            if f_q >= hoy or (hoy <= f_gracia):
+                f_q_str = f_q.strftime('%d/%m/%Y')
+                f_gracia_str = f_gracia.strftime('%d/%m/%Y')
+                st.write(f"• **{q}º Quinquenio Evaluado:** Vence el **{f_q_str}** | Límite periodo de gracia para pago de tasa: **{f_gracia_str}**")
+                
+                if hoy < f_q:
+                    st.success(f"🟢 **ESTADO VIGENTE:** Faltan {(f_q - hoy).days} días para la siguiente evaluación quinquenal.")
+                elif f_q <= hoy <= f_gracia:
+                    st.warning(f"🟧 **PERIODO DE GRACIA:** Quedan {(f_gracia - hoy).days} días para efectuar el pago de la Tasa Quinquenal.")
+                quinquenio_encontrado = True
+                break
+        
+        if not quinquenio_encontrado:
+            st.info(f"• **Tramo Final Cumplido:** Quinquenios intermedios completados satisfactoriamente. Vigencia supeditada a la **Fecha de Vencimiento Final ({f_venc_str})**.")
+
+else:
+    st.warning("⚠️ No se encontraron concesionarios con los filtros seleccionados.")
+
+# ==============================================================================
+# SECCIÓN 2: TABLA GENERAL COMPLETA
+# ==============================================================================
+st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
+
+df_tabla = df_filtrado.copy()
+
+if not df_tabla.empty:
+    if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
+        df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%d/%m/%Y')
+    if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
+        df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
+
+    st.dataframe(df_tabla, use_container_width=True, height=450)
+else:
+    st.info("No hay registros disponibles para mostrar en la tabla.")
