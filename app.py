@@ -11,17 +11,19 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA ABADI / MONTSERRAT
+# ESTILOS CSS AVANZADOS (CORRECCIÓN DE LEGIBILIDAD Y COLOR DE TEXTO)
 # ==============================================================================
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-    html, body, [class*="css"], .stMarkdown, div {
+    /* Tipografía General */
+    html, body, [class*="css"], .stMarkdown, p, span, label, div {
         font-family: 'Abadi', 'Montserrat', sans-serif !important;
+        color: #0F172A !important;
     }
 
-    /* Ocultar barra superior por defecto de Streamlit */
+    /* Ocultar barra superior y pie de página */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
@@ -30,7 +32,6 @@ st.markdown("""
         background: #d40b33;
         padding: 24px 30px;
         border-radius: 12px;
-        color: white;
         margin-bottom: 25px;
         box-shadow: 0 4px 15px rgba(225, 37, 27, 0.2);
     }
@@ -43,7 +44,7 @@ st.markdown("""
     }
     .header-sub {
         font-size: 0.95rem;
-        color: #F8FAFC;
+        color: #F8FAFC !important;
         margin-top: 6px;
         opacity: 0.95;
     }
@@ -61,7 +62,7 @@ st.markdown("""
     .kpi-label {
         font-size: 0.82rem;
         font-weight: 700;
-        color: #64748B;
+        color: #64748B !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 6px;
@@ -69,19 +70,19 @@ st.markdown("""
     .kpi-value {
         font-size: 1.8rem;
         font-weight: 800;
-        color: #0F172A;
+        color: #0F172A !important;
     }
     .kpi-sub {
         font-size: 0.85rem;
         font-weight: 600;
-        color: #E1251B;
+        color: #E1251B !important;
     }
 
     /* Títulos de sección */
     .section-header {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #1E293B;
+        color: #1E293B !important;
         margin-top: 25px;
         margin-bottom: 15px;
         border-left: 4px solid #E1251B;
@@ -95,7 +96,7 @@ st.markdown("""
     }
     .sidebar-header {
         background-color: #E1251B;
-        color: white;
+        color: white !important;
         padding: 12px 15px;
         border-radius: 8px;
         font-weight: 700;
@@ -104,36 +105,41 @@ st.markdown("""
         text-align: center;
     }
 
-    /* Estilo Institucional para Selectbox (Fondo blanco limpio, texto oscuro y borde rojo) */
+    /* Estilo Institucional para Selectbox (Caja Roja MTC con Texto Blanco) */
     div[data-baseweb="select"] > div {
-        background-color: #FFFFFF !important;
+        background-color: #E1251B !important;
         border: 2px solid #E1251B !important;
         border-radius: 8px !important;
     }
 
     div[data-baseweb="select"] * {
-        color: #0F172A !important;
-        -webkit-text-fill-color: #0F172A !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
     }
 
     div[data-baseweb="select"] svg {
-        fill: #E1251B !important;
-        color: #E1251B !important;
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
 
-    /* Opciones flotantes al desplegar */
+    /* Opciones desplegadas de Selectbox (Fondo Blanco con Texto Oscuro) */
     div[data-baseweb="popover"] ul {
         background-color: #FFFFFF !important;
     }
 
-    div[data-baseweb="popover"] li {
+    div[data-baseweb="popover"] li, div[data-baseweb="popover"] li * {
         color: #1E293B !important;
+        -webkit-text-fill-color: #1E293B !important;
     }
 
     div[data-baseweb="popover"] li:hover {
         background-color: #FEF2F2 !important;
-        color: #E1251B !important;
+    }
+    
+    /* Cajas de Alerta de Quinquenio */
+    .stAlert p, .stAlert span {
+        color: inherit !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -205,7 +211,7 @@ with col1:
         <div class="kpi-card">
             <div class="kpi-label">Registro General</div>
             <div class="kpi-value">{len(df)}</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Concesiones totales</div>
+            <div style="font-size:0.75rem; color:#64748B !important; margin-top:2px;">Concesiones totales</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -213,8 +219,8 @@ with col2:
     st.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-label">Resultados Filtrados</div>
-            <div class="kpi-value" style="color:#E1251B;">{len(df_filtrado)}</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Coincidencias activas</div>
+            <div class="kpi-value" style="color:#E1251B !important;">{len(df_filtrado)}</div>
+            <div style="font-size:0.75rem; color:#64748B !important; margin-top:2px;">Coincidencias activas</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -223,7 +229,7 @@ with col3:
         <div class="kpi-card">
             <div class="kpi-label">Contacto / Alertas</div>
             <div class="kpi-sub" style="margin-top:8px;">falba@mtc.gob.pe</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Notificaciones directas</div>
+            <div style="font-size:0.75rem; color:#64748B !important; margin-top:2px;">Notificaciones directas</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -231,8 +237,8 @@ with col4:
     st.markdown("""
         <div class="kpi-card">
             <div class="kpi-label">Estado Conexión</div>
-            <div class="kpi-value" style="color:#16A34A; font-size:1.3rem; margin-top:5px;">🟢 En Vivo</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Google Sheets vinculado</div>
+            <div class="kpi-value" style="color:#16A34A !important; font-size:1.3rem; margin-top:5px;">🟢 En Vivo</div>
+            <div style="font-size:0.75rem; color:#64748B !important; margin-top:2px;">Google Sheets vinculado</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -318,7 +324,11 @@ with col_g1:
             title="Concesiones por Ámbito Geográfico",
             color_discrete_sequence=['#E1251B']
         )
-        fig_ambito.update_layout(template="plotly_white", margin=dict(t=40, b=10, l=10, r=10))
+        fig_ambito.update_layout(
+            template="plotly_white", 
+            margin=dict(t=40, b=10, l=10, r=10),
+            font=dict(color="#0F172A")
+        )
         st.plotly_chart(fig_ambito, use_container_width=True)
 
 with col_g2:
@@ -335,7 +345,10 @@ with col_g2:
             hole=0.4,
             color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8']
         )
-        fig_plazo.update_layout(margin=dict(t=40, b=10, l=10, r=10))
+        fig_plazo.update_layout(
+            margin=dict(t=40, b=10, l=10, r=10),
+            font=dict(color="#0F172A")
+        )
         st.plotly_chart(fig_plazo, use_container_width=True)
 
 # ==============================================================================
