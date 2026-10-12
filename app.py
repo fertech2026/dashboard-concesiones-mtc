@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from datetime import datetime, timedelta
 
 # Configuración de página con icono oficial e interfaz ancha
@@ -10,7 +11,7 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA MONTSERRAT
+# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA ABADI / MONTSERRAT
 # ==============================================================================
 st.markdown("""
     <style>
@@ -298,7 +299,47 @@ else:
     st.warning("⚠️ No se encontraron concesionarios con los filtros seleccionados.")
 
 # ==============================================================================
-# SECCIÓN 2: TABLA GENERAL COMPLETA
+# SECCIÓN 2: ANÁLISIS ESTADÍSTICO Y GRÁFICOS
+# ==============================================================================
+st.markdown('<div class="section-header">📈 Análisis Estadístico del Padrón</div>', unsafe_allow_html=True)
+
+col_g1, col_g2 = st.columns(2)
+
+with col_g1:
+    if 'AMBITO' in df_filtrado.columns and not df_filtrado.empty:
+        df_ambito = df_filtrado['AMBITO'].value_counts().reset_index()
+        df_ambito.columns = ['Ámbito', 'Cantidad']
+        
+        fig_ambito = px.bar(
+            df_ambito, 
+            x='Ámbito', 
+            y='Cantidad', 
+            text='Cantidad',
+            title="Concesiones por Ámbito Geográfico",
+            color_discrete_sequence=['#E1251B']
+        )
+        fig_ambito.update_layout(template="plotly_white", margin=dict(t=40, b=10, l=10, r=10))
+        st.plotly_chart(fig_ambito, use_container_width=True)
+
+with col_g2:
+    if 'PLAZO DE CONCESION' in df_filtrado.columns and not df_filtrado.empty:
+        df_plazo = df_filtrado['PLAZO DE CONCESION'].value_counts().reset_index()
+        df_plazo.columns = ['Plazo (Años)', 'Cantidad']
+        df_plazo['Plazo (Años)'] = df_plazo['Plazo (Años)'].astype(str) + " Años"
+        
+        fig_plazo = px.pie(
+            df_plazo, 
+            names='Plazo (Años)', 
+            values='Cantidad', 
+            title="Distribución por Plazo Autorizado",
+            hole=0.4,
+            color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8']
+        )
+        fig_plazo.update_layout(margin=dict(t=40, b=10, l=10, r=10))
+        st.plotly_chart(fig_plazo, use_container_width=True)
+
+# ==============================================================================
+# SECCIÓN 3: TABLA GENERAL COMPLETA
 # ==============================================================================
 st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
