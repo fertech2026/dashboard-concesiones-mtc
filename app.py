@@ -10,11 +10,10 @@ st.set_page_config(
     page_icon="🏛️"
 )
 
-# COLOR ROJO ÚNICO INSTITUCIONAL MTC
 COLOR_ROJO_MTC = "#E1251B"
 
 # ==============================================================================
-# ESTILOS CSS UNIFICADOS (MISMO ROJO EXACTO #E1251B EN TODO EL DASHBOARD)
+# ESTILOS CSS UNIFICADOS (ROJO MTC EXACTO #E1251B EN TODO EL DASHBOARD)
 # ==============================================================================
 st.markdown(f"""
     <style>
@@ -140,15 +139,51 @@ st.markdown(f"""
         background-color: #FEF2F2 !important;
     }}
 
-    /* ELIMINACIÓN DEL COLOR SALMÓN DE LA TABLA GENERAL */
-    [data-testid="stDataFrame"] th, 
-    [data-testid="stDataFrame"] [role="columnheader"],
-    [data-testid="stDataFrame"] [data-testid="stTable"] th {{
+    /* TABLA HTML ROJO MTC SÓLIDO (#E1251B) SIN OPACIDAD */
+    .custom-table-container {{
+        width: 100%;
+        max-height: 480px;
+        overflow-y: auto;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        background-color: #FFFFFF;
+    }}
+
+    .custom-table {{
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Abadi', 'Montserrat', sans-serif;
+        font-size: 0.88rem;
+    }}
+
+    .custom-table th {{
         background-color: {COLOR_ROJO_MTC} !important;
         color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-        font-weight: 700 !important;
-        opacity: 1 !important;
+        font-weight: 700;
+        text-align: left;
+        padding: 12px 14px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-bottom: 2px solid #B91C1C;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }}
+
+    .custom-table td {{
+        padding: 10px 14px;
+        color: #0F172A !important;
+        border-bottom: 1px solid #F1F5F9;
+    }}
+
+    .custom-table tr:hover {{
+        background-color: #FEF2F2;
+    }}
+
+    .custom-table tr:nth-child(even) {{
+        background-color: #F8FAFC;
     }}
     </style>
 """, unsafe_allow_html=True)
@@ -359,7 +394,7 @@ with col_g2:
         st.plotly_chart(fig_plazo, use_container_width=True)
 
 # ==============================================================================
-# SECCIÓN 3: TABLA GENERAL COMPLETA (ESTILO DIRECTO ROJO SÓLIDO MTC)
+# SECCIÓN 3: TABLA GENERAL COMPLETA (HTML PURA CON ROJO MTC #E1251B ROBUSTO)
 # ==============================================================================
 st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
@@ -371,23 +406,30 @@ if not df_tabla.empty:
     if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
         df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
 
-    # Estilizado en Pandas forzando Rojo MTC sin transparencias ni mezcla de color
-    df_estilizado = df_tabla.style.set_properties(**{
-        'background-color': '#FFFFFF',
-        'color': '#0F172A',
-        'border-color': '#E2E8F0'
-    }).set_table_styles([
-        {
-            'selector': 'th',
-            'props': [
-                ('background-color', f'{COLOR_ROJO_MTC} !important'),
-                ('color', '#FFFFFF !important'),
-                ('font-weight', 'bold !important'),
-                ('opacity', '1 !important')
-            ]
-        }
-    ])
+    # Rellenar valores nulos para evitar errores
+    df_tabla = df_tabla.fillna("-")
 
-    st.dataframe(df_estilizado, use_container_width=True, height=450)
+    # Construcción de la tabla HTML limpia
+    headers_html = "".join([f"<th>{col}</th>" for col in df_tabla.columns])
+    
+    rows_html = ""
+    for _, row in df_tabla.iterrows():
+        cells = "".join([f"<td>{val}</td>" for val in row])
+        rows_html += f"<tr>{cells}</tr>"
+
+    table_html = f"""
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>{headers_html}</tr>
+            </thead>
+            <tbody>
+                {rows_html}
+            </tbody>
+        </table>
+    </div>
+    """
+    
+    st.markdown(table_html, unsafe_allow_html=True)
 else:
     st.info("No hay registros disponibles para mostrar en la tabla.")
