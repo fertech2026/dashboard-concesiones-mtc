@@ -3,25 +3,30 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime, timedelta
 
-# Configuración de página
+# Configuración de página con icono oficial e interfaz ancha
 st.set_page_config(
     page_title="MTC | Control y Búsqueda de Concesiones Postales", 
     layout="wide", 
     page_icon="🏛️"
 )
 
-# Estilos limpios para encabezados y banner (sin tocar la tabla)
+# ==============================================================================
+# ESTILOS CSS AVANZADOS Y TIPOGRAFÍA ABADI / MONTSERRAT
+# ==============================================================================
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
+    /* Tipografía General */
     html, body, [class*="css"], .stMarkdown {
         font-family: 'Abadi', 'Montserrat', sans-serif !important;
     }
 
+    /* Ocultar barra superior y pie de página */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
+    /* Banner Superior Institucional */
     .header-banner {
         background: #d40b33;
         padding: 24px 30px;
@@ -34,19 +39,23 @@ st.markdown("""
         font-weight: 800 !important;
         margin: 0 !important;
         color: #FFFFFF !important;
+        letter-spacing: -0.5px;
     }
     .header-sub {
         font-size: 0.95rem;
         color: #F8FAFC !important;
         margin-top: 6px;
+        opacity: 0.95;
     }
 
+    /* Tarjetas KPI Institucionales */
     .kpi-card {
         background-color: #FFFFFF;
         border-radius: 10px;
         padding: 18px 20px;
         border: 1px solid #E2E8F0;
         border-top: 4px solid #E1251B;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         text-align: center;
     }
     .kpi-label {
@@ -54,6 +63,7 @@ st.markdown("""
         font-weight: 700;
         color: #64748B !important;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
         margin-bottom: 6px;
     }
     .kpi-value {
@@ -67,6 +77,7 @@ st.markdown("""
         color: #E1251B !important;
     }
 
+    /* Títulos de sección */
     .section-header {
         font-size: 1.25rem;
         font-weight: 700;
@@ -77,31 +88,44 @@ st.markdown("""
         padding-left: 12px;
     }
 
-    /* Selectbox rojo con letras blancas */
+    /* Selectbox en Rojo MTC con texto blanco */
     div[data-baseweb="select"] > div {
         background-color: #E1251B !important;
         border: 2px solid #E1251B !important;
         border-radius: 8px !important;
     }
+
     div[data-baseweb="select"] * {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
     }
+
     div[data-baseweb="select"] svg {
         fill: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
+
+    /* Opciones desplegadas de Selectbox (Fondo Blanco con Texto Oscuro) */
     div[data-baseweb="popover"] ul {
         background-color: #FFFFFF !important;
     }
+
     div[data-baseweb="popover"] li, div[data-baseweb="popover"] li * {
         color: #1E293B !important;
         -webkit-text-fill-color: #1E293B !important;
     }
+
+    div[data-baseweb="popover"] li:hover {
+        background-color: #FEF2F2 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# Cargar datos
+
+# ==============================================================================
+# CONEXIÓN A DATOS EN VIVO (GOOGLE SHEETS)
+# ==============================================================================
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1RkLwQcmhck3r_jc_wj834AR9o2R7FU66koXTSEeh6lk/export?format=csv&gid=0"
 
 def cargar_datos():
@@ -122,7 +146,9 @@ except Exception as e:
     st.error(f"⚠️ Error al conectar con Google Sheets: {e}")
     st.stop()
 
-# Header
+# ==============================================================================
+# ENCABEZADO INSTITUCIONAL
+# ==============================================================================
 st.markdown("""
     <div class="header-banner">
         <div class="header-title">🏛️ MTC - Sistema de Control y Búsqueda de Concesiones Postales</div>
@@ -130,12 +156,16 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Filtros
+# ==============================================================================
+# BARRA LATERAL - FILTROS
+# ==============================================================================
 st.sidebar.markdown('### 🔍 Búsqueda y Filtros')
+
 busqueda = st.sidebar.text_input("Razón Social / Concesionario:", placeholder="Ej. DHL, OLVA, EXPRESS...")
 ambito_filtro = st.sidebar.multiselect("Ámbito Geográfico:", options=sorted(df['AMBITO'].dropna().unique().tolist()) if 'AMBITO' in df.columns else [])
 plazo_filtro = st.sidebar.multiselect("Plazo de Concesión (Años):", options=[5, 10, 15, 20])
 
+# Aplicación de filtros
 df_filtrado = df.copy()
 
 if busqueda and 'CONCESIONARIO' in df_filtrado.columns:
@@ -147,18 +177,50 @@ if ambito_filtro and 'AMBITO' in df_filtrado.columns:
 if plazo_filtro and 'PLAZO DE CONCESION' in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado['PLAZO DE CONCESION'].isin(plazo_filtro)]
 
-# KPIs
+# ==============================================================================
+# TARJETAS DE MÉTRICAS (KPIs)
+# ==============================================================================
 col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown(f'<div class="kpi-card"><div class="kpi-label">Registro General</div><div class="kpi-value">{len(df)}</div><div style="font-size:0.75rem; color:#64748B;">Concesiones totales</div></div>', unsafe_allow_html=True)
-with col2:
-    st.markdown(f'<div class="kpi-card"><div class="kpi-label">Resultados Filtrados</div><div class="kpi-value" style="color:#E1251B;">{len(df_filtrado)}</div><div style="font-size:0.75rem; color:#64748B;">Coincidencias activas</div></div>', unsafe_allow_html=True)
-with col3:
-    st.markdown('<div class="kpi-card"><div class="kpi-label">Contacto / Alertas</div><div class="kpi-sub" style="margin-top:8px;">falba@mtc.gob.pe</div><div style="font-size:0.75rem; color:#64748B;">Notificaciones directas</div></div>', unsafe_allow_html=True)
-with col4:
-    st.markdown('<div class="kpi-card"><div class="kpi-label">Estado Conexión</div><div class="kpi-value" style="color:#16A34A; font-size:1.3rem; margin-top:5px;">🟢 En Vivo</div><div style="font-size:0.75rem; color:#64748B;">Google Sheets vinculado</div></div>', unsafe_allow_html=True)
 
-# Sección 1: Ficha y Quinquenios
+with col1:
+    st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Registro General</div>
+            <div class="kpi-value">{len(df)}</div>
+            <div style="font-size:0.75rem; color:#64748B;">Concesiones totales</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Resultados Filtrados</div>
+            <div class="kpi-value" style="color:#E1251B;">{len(df_filtrado)}</div>
+            <div style="font-size:0.75rem; color:#64748B;">Coincidencias activas</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+        <div class="kpi-card">
+            <div class="kpi-label">Contacto / Alertas</div>
+            <div class="kpi-sub" style="margin-top:8px;">falba@mtc.gob.pe</div>
+            <div style="font-size:0.75rem; color:#64748B;">Notificaciones directas</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    st.markdown("""
+        <div class="kpi-card">
+            <div class="kpi-label">Estado Conexión</div>
+            <div class="kpi-value" style="color:#16A34A; font-size:1.3rem; margin-top:5px;">🟢 En Vivo</div>
+            <div style="font-size:0.75rem; color:#64748B;">Google Sheets vinculado</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ==============================================================================
+# SECCIÓN 1: FICHA DETALLADA Y QUINQUENIOS
+# ==============================================================================
 st.markdown('<div class="section-header">📋 Ficha Detallada de Concesión y Quinquenios</div>', unsafe_allow_html=True)
 
 if 'CONCESIONARIO' in df_filtrado.columns and not df_filtrado.empty:
@@ -214,10 +276,13 @@ if 'CONCESIONARIO' in df_filtrado.columns and not df_filtrado.empty:
         
         if not quinquenio_encontrado:
             st.info(f"• **Tramo Final Cumplido:** Quinquenios intermedios completados satisfactoriamente. Vigencia supeditada a la **Fecha de Vencimiento Final ({f_venc_str})**.")
+
 else:
     st.warning("⚠️ No se encontraron concesionarios con los filtros seleccionados.")
 
-# Sección 2: Gráficos
+# ==============================================================================
+# SECCIÓN 2: ANÁLISIS ESTADÍSTICO Y GRÁFICOS
+# ==============================================================================
 st.markdown('<div class="section-header">📈 Análisis Estadístico del Padrón</div>', unsafe_allow_html=True)
 
 col_g1, col_g2 = st.columns(2)
@@ -226,8 +291,20 @@ with col_g1:
     if 'AMBITO' in df_filtrado.columns and not df_filtrado.empty:
         df_ambito = df_filtrado['AMBITO'].value_counts().reset_index()
         df_ambito.columns = ['Ámbito', 'Cantidad']
-        fig_ambito = px.bar(df_ambito, x='Ámbito', y='Cantidad', text='Cantidad', title="Concesiones por Ámbito Geográfico", color_discrete_sequence=['#E1251B'])
-        fig_ambito.update_layout(template="plotly_white", margin=dict(t=40, b=10, l=10, r=10), font=dict(color="#0F172A"))
+        
+        fig_ambito = px.bar(
+            df_ambito, 
+            x='Ámbito', 
+            y='Cantidad', 
+            text='Cantidad',
+            title="Concesiones por Ámbito Geográfico",
+            color_discrete_sequence=['#E1251B']
+        )
+        fig_ambito.update_layout(
+            template="plotly_white", 
+            margin=dict(t=40, b=10, l=10, r=10),
+            font=dict(color="#0F172A")
+        )
         st.plotly_chart(fig_ambito, use_container_width=True)
 
 with col_g2:
@@ -235,11 +312,24 @@ with col_g2:
         df_plazo = df_filtrado['PLAZO DE CONCESION'].value_counts().reset_index()
         df_plazo.columns = ['Plazo (Años)', 'Cantidad']
         df_plazo['Plazo (Años)'] = df_plazo['Plazo (Años)'].astype(str) + " Años"
-        fig_plazo = px.pie(df_plazo, names='Plazo (Años)', values='Cantidad', title="Distribución por Plazo Autorizado", hole=0.4, color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8'])
-        fig_plazo.update_layout(margin=dict(t=40, b=10, l=10, r=10), font=dict(color="#0F172A"))
+        
+        fig_plazo = px.pie(
+            df_plazo, 
+            names='Plazo (Años)', 
+            values='Cantidad', 
+            title="Distribución por Plazo Autorizado",
+            hole=0.4,
+            color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8']
+        )
+        fig_plazo.update_layout(
+            margin=dict(t=40, b=10, l=10, r=10),
+            font=dict(color="#0F172A")
+        )
         st.plotly_chart(fig_plazo, use_container_width=True)
 
-# Sección 3: Tabla con Estilo Directo en Pandas
+# ==============================================================================
+# SECCIÓN 3: TABLA GENERAL COMPLETA
+# ==============================================================================
 st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
 df_tabla = df_filtrado.copy()
@@ -250,12 +340,21 @@ if not df_tabla.empty:
     if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
         df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
 
-    # Aplicamos estilo directo a la tabla usando pandas para forzar fondo blanco y texto oscuro
+    # Aplicamos estilo directo en Pandas para forzar el Rojo MTC (#E1251B) en encabezados y filas legibles
     df_estilizado = df_tabla.style.set_properties(**{
         'background-color': '#FFFFFF',
         'color': '#0F172A',
         'border-color': '#E2E8F0'
-    })
+    }).set_table_styles([
+        {
+            'selector': 'th',
+            'props': [
+                ('background-color', '#E1251B !important'),
+                ('color', '#FFFFFF !important'),
+                ('font-weight', 'bold !important')
+            ]
+        }
+    ])
 
     st.dataframe(df_estilizado, use_container_width=True, height=450)
 else:
