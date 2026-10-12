@@ -103,7 +103,7 @@ st.markdown("""
         text-align: center;
     }
 
-    /* Estilo Institucional para Selectbox (Fondo blanco limpio con borde e icono rojo) */
+    /* Estilo Institucional para Selectbox (Fondo blanco limpio, texto oscuro y borde rojo) */
     div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
         border: 2px solid #E1251B !important;
