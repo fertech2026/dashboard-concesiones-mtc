@@ -13,7 +13,7 @@ st.set_page_config(
 COLOR_ROJO_MTC = "#E1251B"
 
 # ==============================================================================
-# ESTILOS CSS UNIFICADOS (ROJO MTC EXACTO #E1251B EN TODO EL DASHBOARD)
+# ESTILOS CSS UNIFICADOS (CORRECCIÓN DE ENTRADAS DE TEXTO EN BARRA LATERAL)
 # ==============================================================================
 st.markdown(f"""
     <style>
@@ -107,25 +107,57 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    /* Selectbox en Rojo MTC exacto */
-    div[data-baseweb="select"] > div {{
+    /* FIX DEFINITIVO PARA CAMPOS DE TEXTO Y SELECCIÓN EN LA BARRA LATERAL */
+    [data-testid="stSidebar"] input {{
+        color: #0F172A !important;
+        -webkit-text-fill-color: #0F172A !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+    }}
+
+    [data-testid="stSidebar"] input::placeholder {{
+        color: #94A3B8 !important;
+        -webkit-text-fill-color: #94A3B8 !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] > div {{
+        background-color: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] * {{
+        color: #0F172A !important;
+        -webkit-text-fill-color: #0F172A !important;
+        font-weight: 600 !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] svg {{
+        fill: {COLOR_ROJO_MTC} !important;
+        color: {COLOR_ROJO_MTC} !important;
+    }}
+
+    /* Selectbox Principal de Evaluación en Rojo MTC exacto */
+    .stMainBlockContainer div[data-baseweb="select"] > div {{
         background-color: {COLOR_ROJO_MTC} !important;
         border: 2px solid {COLOR_ROJO_MTC} !important;
         border-radius: 8px !important;
     }}
 
-    div[data-baseweb="select"] * {{
+    .stMainBlockContainer div[data-baseweb="select"] * {{
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
     }}
 
-    div[data-baseweb="select"] svg {{
+    .stMainBlockContainer div[data-baseweb="select"] svg {{
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }}
 
-    /* Popover desplegable del Selectbox */
+    /* Popover desplegable de opciones */
     div[data-baseweb="popover"] ul {{
         background-color: #FFFFFF !important;
     }}
@@ -406,10 +438,8 @@ if not df_tabla.empty:
     if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
         df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
 
-    # Rellenar valores nulos para evitar errores
     df_tabla = df_tabla.fillna("-")
 
-    # Construcción de la tabla HTML limpia
     headers_html = "".join([f"<th>{col}</th>" for col in df_tabla.columns])
     
     rows_html = ""
