@@ -92,7 +92,7 @@ st.markdown("""
         background-color: #F8FAFC;
         border-right: 1px solid #E2E8F0;
     }
-    .sidebar-header {
+   .sidebar-header {
         background-color: #E1251B;
         color: white;
         padding: 12px 15px;
@@ -101,6 +101,16 @@ st.markdown("""
         font-size: 1rem;
         margin-bottom: 15px;
         text-align: center;
+    }
+
+    /* Color del texto e icono del desplegable seleccionado */
+    div[data-baseweb="select"] div {
+        color: #FFFFFF !important;
+    }
+
+    /* Color de la flecha del desplegable */
+    div[data-baseweb="select"] svg {
+        fill: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
