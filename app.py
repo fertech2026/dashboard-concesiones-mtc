@@ -137,7 +137,7 @@ st.markdown("""
         background-color: #FEF2F2 !important;
     }
 
-    /* FIX DEFINITIVO PARA LA TABLA GENERAL (DATAFRAME) */
+    /* FIX PARA LA TABLA GENERAL (DATAFRAME) */
     [data-testid="stDataFrame"] {
         background-color: #FFFFFF !important;
     }
@@ -348,4 +348,41 @@ with col_g1:
             margin=dict(t=40, b=10, l=10, r=10),
             font=dict(color="#0F172A")
         )
-        st.plotly_chart(fig_ambito, use_container_width=
+        st.plotly_chart(fig_ambito, use_container_width=True)
+
+with col_g2:
+    if 'PLAZO DE CONCESION' in df_filtrado.columns and not df_filtrado.empty:
+        df_plazo = df_filtrado['PLAZO DE CONCESION'].value_counts().reset_index()
+        df_plazo.columns = ['Plazo (Años)', 'Cantidad']
+        df_plazo['Plazo (Años)'] = df_plazo['Plazo (Años)'].astype(str) + " Años"
+        
+        fig_plazo = px.pie(
+            df_plazo, 
+            names='Plazo (Años)', 
+            values='Cantidad', 
+            title="Distribución por Plazo Autorizado",
+            hole=0.4,
+            color_discrete_sequence=['#E1251B', '#1E293B', '#64748B', '#94A3B8']
+        )
+        fig_plazo.update_layout(
+            margin=dict(t=40, b=10, l=10, r=10),
+            font=dict(color="#0F172A")
+        )
+        st.plotly_chart(fig_plazo, use_container_width=True)
+
+# ==============================================================================
+# SECCIÓN 3: TABLA GENERAL COMPLETA
+# ==============================================================================
+st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
+
+df_tabla = df_filtrado.copy()
+
+if not df_tabla.empty:
+    if 'FECHA DE INICIO DE CONCESION' in df_tabla.columns:
+        df_tabla['FECHA DE INICIO DE CONCESION'] = df_tabla['FECHA DE INICIO DE CONCESION'].dt.strftime('%d/%m/%Y')
+    if 'FECHA DE VENCIMIENTO DE CONCESION' in df_tabla.columns:
+        df_tabla['FECHA DE VENCIMIENTO DE CONCESION'] = df_tabla['FECHA DE VENCIMIENTO DE CONCESION'].dt.strftime('%d/%m/%Y')
+
+    st.dataframe(df_tabla, use_container_width=True, height=450)
+else:
+    st.info("No hay registros disponibles para mostrar en la tabla.")
