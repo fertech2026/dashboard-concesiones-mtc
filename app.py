@@ -17,7 +17,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
     html, body, [class*="css"], .stMarkdown, div {
-        font-family: 'Montserrat', sans-serif !important;
+        font-family: 'Abadi', 'Montserrat', sans-serif !important;
     }
 
     /* Ocultar barra superior por defecto de Streamlit */
