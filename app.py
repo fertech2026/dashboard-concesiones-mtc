@@ -103,14 +103,19 @@ st.markdown("""
         text-align: center;
     }
 
-    /* Color del texto e icono del desplegable seleccionado */
-    div[data-baseweb="select"] div {
+   /* Forzar texto en blanco para la opción seleccionada del Selectbox */
+    div[data-baseweb="select"] span {
         color: #FFFFFF !important;
     }
 
-    /* Color de la flecha del desplegable */
+    div[data-baseweb="select"] div[role="button"] {
+        color: #FFFFFF !important;
+    }
+
+    /* Forzar color blanco en la flecha del desplegable */
     div[data-baseweb="select"] svg {
         fill: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
     </style>
 """, unsafe_allow_html=True)
