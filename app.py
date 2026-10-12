@@ -102,19 +102,53 @@ st.markdown("""
         margin-bottom: 15px;
         text-align: center;
     }
-
-   /* Forzar texto, flecha y contenedor de la opción seleccionada a Blanco */
-    div[data-testid="stSelectbox"] * {
-        color: #FFFFFF !important;
-        fill: #FFFFFF !important;
+.sidebar-header {
+        background-color: #E1251B;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        text-align: center;
     }
-    
+
+    /* Fondo rojo MTC para la caja de selección */
     div[data-baseweb="select"] > div {
         background-color: #E1251B !important;
+        border-color: #E1251B !important;
+    }
+
+    /* Texto blanco en la opción seleccionada */
+    div[data-baseweb="select"] div, 
+    div[data-baseweb="select"] span {
         color: #FFFFFF !important;
+    }
+
+    /* Restaurar el icono de la flecha desplegable en blanco */
+    div[data-baseweb="select"] svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+        width: 1.2rem !important;
+        height: 1.2rem !important;
+    }
+
+    /* Estilos para las opciones cuando se abre la lista desplegable */
+    ul[data-baseweb="menu"] {
+        background-color: #FFFFFF !important;
+    }
+
+    ul[data-baseweb="menu"] li {
+        color: #1E293B !important;
+    }
+
+    ul[data-baseweb="menu"] li:hover {
+        background-color: #F1F5F9 !important;
+        color: #E1251B !important;
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # ==============================================================================
 # CONEXIÓN A DATOS EN VIVO (GOOGLE SHEETS)
