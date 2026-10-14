@@ -13,7 +13,7 @@ st.set_page_config(
 COLOR_ROJO_MTC = "#E1251B"
 
 # ==============================================================================
-# ESTILOS CSS UNIFICADOS (CORRECCIÓN MULTISELECT, BOTONES DE ELIMINAR Y SIDEBAR)
+# ESTILOS CSS UNIFICADOS (FIX TOTAL DE MULTISELECT, CHIPS Y SCROLLBARS)
 # ==============================================================================
 st.markdown(f"""
     <style>
@@ -111,7 +111,7 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    /* CAMPOS DE ENTRADA Y SELECCIÓN EN LA BARRA LATERAL */
+    /* CAMPOS DE ENTRADA Y CAJAS DE MULTISELECT EN BARRA LATERAL */
     [data-testid="stSidebar"] input {{
         color: #0F172A !important;
         -webkit-text-fill-color: #0F172A !important;
@@ -132,27 +132,43 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    /* DSISEÑO INSTITUCIONAL DE LAS ETIQUETAS Y BOTONES 'X' EN MULTISELECT */
-    [data-testid="stSidebar"] div[data-baseweb="tag"],
+    /* ESTILO COMPLETO DE ETIQUETAS/CHIPS DEL MULTISELECT EN ROJO MTC */
     [data-testid="stSidebar"] [data-baseweb="tag"] {{
         background-color: {COLOR_ROJO_MTC} !important;
         border-radius: 6px !important;
         border: none !important;
-        padding: 2px 8px !important;
+        padding: 4px 8px !important;
+        margin: 2px !important;
     }}
 
-    [data-testid="stSidebar"] div[data-baseweb="tag"] *,
-    [data-testid="stSidebar"] [data-baseweb="tag"] * {{
+    [data-testid="stSidebar"] [data-baseweb="tag"] span {{
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 700 !important;
+        font-size: 0.8rem !important;
     }}
 
-    /* Icono 'X' (Borrar) en blanco visible */
-    [data-testid="stSidebar"] [data-baseweb="tag"] svg,
-    [data-testid="stSidebar"] [data-baseweb="tag"] span[role="button"] {{
+    /* BOTÓN 'X' DE ELIMINAR EN CHIPS DE MULTISELECT */
+    [data-testid="stSidebar"] [data-baseweb="tag"] svg {{
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
+        width: 14px !important;
+        height: 14px !important;
+    }}
+
+    /* BARRA DESLIZANTE (SCROLLBAR) DENTRO DE LOS SELECTS / MULTISELECTS */
+    [data-testid="stSidebar"] div[data-baseweb="select"] ::-webkit-scrollbar {{
+        width: 6px !important;
+        height: 6px !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] ::-webkit-scrollbar-thumb {{
+        background-color: #94A3B8 !important;
+        border-radius: 4px !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] ::-webkit-scrollbar-track {{
+        background-color: #F1F5F9 !important;
     }}
 
     [data-testid="stSidebar"] div[data-baseweb="select"] svg {{
