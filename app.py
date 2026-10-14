@@ -13,7 +13,7 @@ st.set_page_config(
 COLOR_ROJO_MTC = "#E1251B"
 
 # ==============================================================================
-# ESTILOS CSS UNIFICADOS (CORRECCIÓN MULTISELECT Y SIDEBAR ICON)
+# ESTILOS CSS UNIFICADOS (CORRECCIÓN MULTISELECT, BOTONES DE ELIMINAR Y SIDEBAR)
 # ==============================================================================
 st.markdown(f"""
     <style>
@@ -28,7 +28,7 @@ st.markdown(f"""
     /* Ocultar elementos secundarios y texto de icono residual */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
-    
+
     [data-testid="stSidebarCollapseButton"] span {{
         display: none !important;
     }}
@@ -111,7 +111,7 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    /* CAMPOS DE TEXTO Y SELECCIÓN EN LA BARRA LATERAL */
+    /* CAMPOS DE ENTRADA Y SELECCIÓN EN LA BARRA LATERAL */
     [data-testid="stSidebar"] input {{
         color: #0F172A !important;
         -webkit-text-fill-color: #0F172A !important;
@@ -132,20 +132,32 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    /* CHIPS / TAGS SELECCIONADOS EN MULTISELECT (ROJO MTC CON TEXTO BLANCO) */
-    [data-testid="stSidebar"] div[data-baseweb="tag"] {{
+    /* DSISEÑO INSTITUCIONAL DE LAS ETIQUETAS Y BOTONES 'X' EN MULTISELECT */
+    [data-testid="stSidebar"] div[data-baseweb="tag"],
+    [data-testid="stSidebar"] [data-baseweb="tag"] {{
         background-color: {COLOR_ROJO_MTC} !important;
         border-radius: 6px !important;
+        border: none !important;
+        padding: 2px 8px !important;
     }}
 
-    [data-testid="stSidebar"] div[data-baseweb="tag"] * {{
+    [data-testid="stSidebar"] div[data-baseweb="tag"] *,
+    [data-testid="stSidebar"] [data-baseweb="tag"] * {{
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
     }}
 
-    [data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
+    /* Icono 'X' (Borrar) en blanco visible */
+    [data-testid="stSidebar"] [data-baseweb="tag"] svg,
+    [data-testid="stSidebar"] [data-baseweb="tag"] span[role="button"] {{
         fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="select"] svg {{
+        fill: {COLOR_ROJO_MTC} !important;
+        color: {COLOR_ROJO_MTC} !important;
     }}
 
     /* Selectbox Principal de Evaluación en Rojo MTC exacto */
