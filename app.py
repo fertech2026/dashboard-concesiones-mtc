@@ -13,7 +13,7 @@ st.set_page_config(
 COLOR_ROJO_MTC = "#E1251B"
 
 # ==============================================================================
-# ESTILOS CSS UNIFICADOS (CORRECCIÓN DE ENTRADAS DE TEXTO EN BARRA LATERAL)
+# ESTILOS CSS UNIFICADOS (CORRECCIÓN MULTISELECT Y SIDEBAR ICON)
 # ==============================================================================
 st.markdown(f"""
     <style>
@@ -25,9 +25,13 @@ st.markdown(f"""
         color: #0F172A;
     }}
 
-    /* Ocultar elementos secundarios */
+    /* Ocultar elementos secundarios y texto de icono residual */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
+    
+    [data-testid="stSidebarCollapseButton"] span {{
+        display: none !important;
+    }}
 
     /* Banner Superior Institucional en Rojo MTC exacto */
     .header-banner {{
@@ -107,7 +111,7 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    /* FIX DEFINITIVO PARA CAMPOS DE TEXTO Y SELECCIÓN EN LA BARRA LATERAL */
+    /* CAMPOS DE TEXTO Y SELECCIÓN EN LA BARRA LATERAL */
     [data-testid="stSidebar"] input {{
         color: #0F172A !important;
         -webkit-text-fill-color: #0F172A !important;
@@ -128,15 +132,20 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    [data-testid="stSidebar"] div[data-baseweb="select"] * {{
-        color: #0F172A !important;
-        -webkit-text-fill-color: #0F172A !important;
+    /* CHIPS / TAGS SELECCIONADOS EN MULTISELECT (ROJO MTC CON TEXTO BLANCO) */
+    [data-testid="stSidebar"] div[data-baseweb="tag"] {{
+        background-color: {COLOR_ROJO_MTC} !important;
+        border-radius: 6px !important;
+    }}
+
+    [data-testid="stSidebar"] div[data-baseweb="tag"] * {{
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
         font-weight: 600 !important;
     }}
 
-    [data-testid="stSidebar"] div[data-baseweb="select"] svg {{
-        fill: {COLOR_ROJO_MTC} !important;
-        color: {COLOR_ROJO_MTC} !important;
+    [data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
+        fill: #FFFFFF !important;
     }}
 
     /* Selectbox Principal de Evaluación en Rojo MTC exacto */
@@ -426,7 +435,7 @@ with col_g2:
         st.plotly_chart(fig_plazo, use_container_width=True)
 
 # ==============================================================================
-# SECCIÓN 3: TABLA GENERAL COMPLETA (HTML PURA CON ROJO MTC #E1251B ROBUSTO)
+# SECCIÓN 3: TABLA GENERAL COMPLETA
 # ==============================================================================
 st.markdown('<div class="section-header">📊 Padrón General de Concesionarios</div>', unsafe_allow_html=True)
 
